@@ -1,0 +1,13 @@
+# Site navigation links
+
+- title: Home
+  url: /
+
+- title: Getting Started
+  url: /getting-started
+
+- title: API Docs
+  url: http://docs.autopilot.apiary.io/
+
+- title: Blog
+  url: /blog/
