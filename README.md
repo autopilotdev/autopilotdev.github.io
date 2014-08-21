@@ -7,10 +7,9 @@ To view the documentation as it is intended please visit: [http://developers.aut
 
 To work on this documentation locally you will need to clone the repository and then:
 
-`gem install jekyll`
-
-`gem install bundler`
-
-`bundle install`
-
-`jekyll serve`
+`
+gem install jekyll
+gem install bundler
+bundle install
+jekyll serve
+`
