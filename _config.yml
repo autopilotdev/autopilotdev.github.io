@@ -1,10 +1,10 @@
 # Site wide configuration
 
-title:            Autopilot Developers
+title:            Autopilot API
 locale:           en_US
 
 # @Note: this is silly and we will have to keep changing it for dev mode
-url:              http://developers.autopilothq.com
+url:              http://localhost:4000 #http://developers.autopilothq.com
 
 # Jekyll configuration
 
@@ -29,9 +29,9 @@ kramdown:
 # Site owner
 owner:
   name: Autopilot
-  avatar: autopilot-developers.png
-  bio: "Autopilot is the Automation Layer for Marketing. It consists of an extensive suite of marketing tools and integrations which empower marketers to drive qualified leads into their sales funnels, segment customers, and automate their marketing."
-  email: "dev@autopilothq.com"
+  avatar: autopilot-developers.svg
+  bio: "Autopilot is easy-to-use software for multi-channel marketing. Autopilot enables marketers to create marketing journeys and convert their leads into customers. We connect you to the right people at the right time, in the right place."
+  email: 
   disqus-shortname: 
   twitter: "autopilotdev"
   facebook:

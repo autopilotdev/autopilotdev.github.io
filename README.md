@@ -1,6 +1,6 @@
-# Autopilot Developer Platform Documentation & Blog
+# Autopilot API & Developer Platform
 
-This is the repository for the Autopilot Developer documentation portal. It uses Jeckll to render the site
+This is the repository for the Autopilot API & Developer documentation portal. It uses Jeckll to render the site
 statically and is hosted on Github pages. 
 
 To view the documentation as it is intended please visit: [http://developers.autopilothq.com](http://developers.autopilothq.com)
@@ -13,3 +13,7 @@ gem install bundler
 bundle install
 jekyll serve
 `
+
+Chris Sharkey
+CTO, Autopilot
+https://autopilothq.com

@@ -1,1021 +1,612 @@
 FORMAT: 1A
 HOST: https://api.autopilothq.com
 
-# Autopilot API and Developer Guide
-Autopilot is the Automation Layer for Marketing. It consists of an extensive suite of marketing 
-tools and integrations which empower marketers to drive qualified leads into their sales funnels, 
-segment customers, and automate their marketing. 
+# Autopilot REST API Documentation
+Autopilot is easy-to-use software for multi-channel marketing, it enables marketers to create marketing journeys and convert  
+their leads into customers.
 
-The [Autopilot Developer Portal](http://developers.autopilothq.com) is available here: [http://developers.autopilothq.com](http://developers.autopilothq.com)
+The Autopilot REST API is designed to allow you to integrate your app with the Autopilot platform both to improve and  
+customize your experience in Autopilot, and improve the data being pushed into your app. Example applications of the API  
+include:
 
-This API is designed to allow you to add new tools to the Autopilot platform, you might want to do
-this if:
+# @TODO: hasMore with start key, allow _all_contacts and _all_contacts_and_companies
+# @TODO: Document rate limiting
+# @TODO: Document 405 Method Not Allowed for valid urls which don't support a particular type
 
-- Your company wants to use Autopilot but you need to integrate parts of your own backend
-- You have a service which you think would be valuable to Autopilot users and want to sell it or otherwise make it available
-- You want an easier way to control Salesforce through a sensible API
+- Sending leads from Autopilot in your own app
+- Adding contacts from your app into Autopilot
+- Triggering Autopilot journeys from your app
+- Keeping unsubscribes in sync between Autopilot and your app
+- Adding to the Autopilot activity feed
+- Enhance contact profiles with custom fields and data from your app
+- Get data from your app into and out of Salesforce using Autopilot's deep integration
 
-# Group Quick Start
+Of course, there are many other uses for the Triggers and Actions provided below, and we invite you to use them in any way  
+which enhances your usage of Autopilot. This is a new API and as such we [welcome your suggestions](http://docs.autopilot.apiary.io/#autopilotappbasics)
+on how it can be improve and what you would like to see added.
 
-If you're interested in building an app for Autopilot, you need to do the following steps
-as a minimum:
+If you have any question about how to accomplish something specific with our API, please [submit a Zendesk ticket](http://docs.autopilot.apiary.io/#autopilotappbasics) as we will  
+be able to advise you on how to accomplish what you are after.
 
-1) Sign up for a trial account if you don't already have one (http://www.autopilothq.com)
+The document you are currently reading is the Autopilot API Documentation. More information, example apps, and the  
+Autopilot developer blog can be found on the [Autopilot Developer Portal](http://developers.autopilothq.com).
 
-2) Read [Autopilot App Basics](http://docs.autopilot.apiary.io/#autopilotappbasics), 
-[Creating an app in Autopilot](http://docs.autopilot.apiary.io/#creatinganappinautopilot) and 
-[Add an Ingredient to your App](http://docs.autopilot.apiary.io/#addinganingredienttoyourapp) below.
-You'll need at least one ingredient in order to make your app useful.
+We also have a [Zapier integration](http://developers.autopilothq.com), enabling integration of your Autopilot account with many web applications and CRMs  
+which you are already familiar with. To read more about our [Zapier integration](http://developers.autopilothq.com), please visit the [Autopilot Developer Portal](http://developers.autopilothq.com).
 
-3) Read the section on your favourite language's client library, we have libraries for:
+We have tried to keep the Apiary docs closely coupled with the functionality our API provides, to read about other topics related to the API, please see the following:
 
-* [Node.js](http://docs.autopilot.apiary.io/#nodejsclientlibrary)
-* [PHP](http://docs.autopilot.apiary.io/#phpclientlibrary)
-* [Ruby](http://docs.autopilot.apiary.io/#phpclientlibrary)
-* [Python](http://docs.autopilot.apiary.io/#phpclientlibrary)
+- Zapier Integration
+- Rate Limits
+- API Features coming soon
+- More topics
+- How to update existing contacts
+- How to create and set custom fields
+- How to trigger Autopilot Journeys from the API
 
-The Autopilot API uses HTTP as a protocol and is fully detailed below. The client
-libraries are provided for speed and convenience and each fully implements the API 
-so you can just include the library and get working on your app immediately without worrying about
-the nuances of our API.
+# Group Authentication
 
-# Group Autopilot App Basics
+### Authentication
 
-### What is an Autopilot App
+Autopilot uses HTTP Basic Authorization over HTTPS to identify your requests. When Autopilot receives your request, it checks  
+the API key and if it does, your request it fulfilled. 
 
-Autopilot apps provide a way to integrate with an automate external APIs and system. You can make an app
-to automate processes within your business using your internal API, or you can provide an app to be
-shared with others to promote the use of your service.
+### Getting an API key
 
-An App in Autopilot consists of one or more "ingredients". Ingredients are actions, triggers and conditions.
-A trigger is some sort of event which happens in your app which would initiate an automation flow, an action
-is something which your app does for the current batch of contacts in an automation flow, and a condition is
-something which checks the status of some value for the current batch of contacts in an automation flow.
+To get an API for your Autopilot account:
 
-You can think of an app as being a set of related functions that your external system provides. You can
-create as many apps as you want, but grouping similar ingredients make sense.
+1. Login to your Autopilot account at https://login.autopilothq.com  
+2. Go to the Settings section  
+3. Go to "API Keys"  
+4. Click "Generate"
+5. Copy & Paste the API key
 
-For example, the Twilio app provides the following ingredients:
+If you don't already have an Autopilot account, you can sign up for a free trial here https://autopilothq.com
 
-* Send SMS (Action)
-* Send MMS (Action)
-* Make Call (Action)
-* Receive Call (Trigger)
-* Receive SMS (Trigger)
+### Protecting your API key
 
-The minimum requirement for an app is to have one ingredient. 
+Your API key can be used to control your account, so you need to make sure that you protect it. Simple ways to avoid
+your API key being accessed by anyone else are:
 
-### Autopilot Basics
+* Always use HTTPS when accessing the Autopilot REST API (it is all we accept anyway)
+* Do not send the API key over email
+* Do not store the API key in your version control system
 
-At the core of Autopilot is the Autopilot canvas. This allows contacts to flow through a series of objects, 
-each of which takes some sort of action with the data it is presented. For example, a flow might trigger 
-when a form is submitted, send the contact a welcome email, wait 3 days, see if the user has opened the
-email, send a reminder if they haven't and make them a lead in Salesforce if they have.
+The safest way to use your API key is to store it in your database or on a file on your web server and access it at 
+runtime in your application.
 
-There is an infinite (well not really, but there's many) combination of objects that can be made, and part
-of adding to the Autopilot API consists of adding new triggers, actions and conditions.
+### Regenerating your API key
 
-![alt text](http://cl.ly/image/1Z2L3b0v0i3U/autopilot1.png "Autopilot Canvas")
+If your API key is every accidentally made public or put in a place where it could be accessed by an untrusted
+source, you can regenerate it to make a new one.
 
-There are 3 kinds of object which are allowed on the Automation Canvas: triggers, actions and conditions. 
-Additionally, outcome paths decide what happens after an object has completed its work.
+To do so:
 
-### Terminology
+1. Login to your Autopilot account at https://login.autopilothq.com  
+2. Go to the Settings section  
+3. Go to "API Keys"  
+4. Click "Regenerate"  
+5. Copy & Paste the API key
 
-| Terminology             | Description   | Example  
-| :-------------    |:------------- | :-----
-| `App`             | A group of ingredients | Apiary App
-| `Ingredient`      | A trigger, action or condition | Send an SMS action, Received SMS Trigger
-| `Trigger`         | An event which initiates a flow | Contact added to list
-| `Action`          | An action which takes place when reached in the flow | Send Email
-| `Condition`       | A condition which is checked and multiple outcomes are available | Form field status
-| `Outcome path`    | the relationship and sequence events between the Triggers, Actions, and Conditions that comprise an Autopilot campaign. 
-| `Flow`            | A series of connected triggers, actions and conditions created by an Autopilot user
-| `Recipe`          | A pre-defined flow created to show marketers best practices
+Note that this will cause your previous API key to stop working immediately.
 
-### App availability and sharing
+### Apiary mocking server
 
-By default, any app you create will only be available on the Autopilot instance that you create it on.
-An Autopilot instance is simply your company's separate system and database on the Autopilot system.
-This means that when you first create an app, it is available only for internal use for your company
-on the instance on which it was created.
+Please feel free to take advantage of Apiary's built-in examples and mocking server. Please note though that when using the  
+live API, that you will need to provide the `Authorization` header as described below. Apiary doesn't support Authentication  
+at the moment, so you will be able to do all of your test requests without providing an API key.
 
-If you have more than one Autopilot instance, you are able to share your app with those by specifying
-the Autopilot instance ids in your app's settings. This way if you have a group of instances associated
-with your account, you can share the functionality of your app with them.
+### Feed Items
 
-Finally, it is possible to request for your app to be made public. Presently, there is no scope to charge
-for your app but *that will change*. You soon be able to specify a monthly fee for your app which
-clients who choose to install it will need to pay in order to keep using it.
+For every API request that you make which is associated with a contact, an activity feed item is added for that contact.
 
-# Group Creating an app in Autopilot
+Here are some examples:
 
-### Logging in
+(example1)
+(example2)
 
-The first step in creating an app is done in the App Builder section of the Autopilot admin system, so
-you will need to be able to login to your organisation's account in order to create the app.
+# Group Triggers
 
-If you haven't been provided a login yet, ask the person who set up your Autopilot account to add you
-to the "My Team" section by following these instructions: <http://support.bislr.com/knowledgebase/articles/147461-my-team-adding-new-users-to-your-account>
+Triggers answer the question: *What events can I listen for coming out of Autopilot?*
 
-### Adding an App
+A trigger is fired any time an event listed below happens, for which you have a "REST Hook" set up. A REST Hook is a URL endpoint which
+you provide using the `/v1/hook` method, it will have data POSTed to it when the event occurs.
 
-#### Step 1 - Open App settings
+## Adding a hook
 
-Click on the *Settings* icon and then select *API*
 
-#### Step 2 - App store info
+## Supported Events
 
-Give your app a `Title`, `Author`, `Short Description` and `Long Description`. Don't worry too much
-if you don't have all the details just yet, you can come back at any time. Everything is optional 
-except for `Title`, although there are requirements on these fields when it comes to submitting 
-your app to the store later.
+Note that in all of these events, both the `contact_id` and `email` are included for the contact in the
+response in case you prefer to key off email address instead of our internal id. This prevents forcing you to make an 
+additional API call to GET the contact just to find out the email address from the `contact_id`.
 
-#### Step 3 - Take note of your API key & secret
+### Contact added (Event key: contact_added)
 
-Each App has its own API key and secret. Make note of these now, as you will need them in
-order to implement the backend portion of your ingredients.
+Any time a contact is added to or updated in Autopilot, this event fires.
 
-Please see the [Authentication](http://docs.autopilot.apiary.io/#apiauthentication) section for more information on how to use these details.
+Contacts can be added to Autopilot via a variety of methods:
 
-#### Next step - Add your first ingredient
+* Manually added
+* Spreadsheet import
+* Salesforce sync
+* API Call (including your own)
+* Zapier event
+* SegmentIO event
 
-Add your first ingredient. The next section of this document explains what is involved in creating
-an ingredient.
+***Rate***
 
-# Group Adding an ingredient to your app
+It is possible that there will be 10s of 1000s of contact_added events which happen in a small space of time, this 
+would happen in the case of a spreadsheet import or a Salesforce sync. You need to make sure that your system is 
+capable of handling these volumes.
 
-### Adding an Ingredient to your App
+***Retries***
 
-#### Step 1 - Open App
+If your REST Hook url is unavailable, returns an error code (anything other than 200 OK), the Autopilot API will retry
+up to 3 times to get the request through. After this, the request will be lost.
 
-Click on the app that you wish you add an ingredient to:
+***Updated flag***
 
-**screenshot**
-
-#### Step 2 - Add a new Ingredient
-
-Click the *Add new ingredient* button
-
-#### Step 3 - Select Trigger, Action or Condition
-
-Select what type of ingredient you wish to create.
-
-You should use a `trigger` when:
-
-* You want an event to result the start of a flow.
-* You want to integrate events from external systems.
-
-**Example:** user registers on your system.
-
-You should use an `action` when:
-
-* You want your system to perform a task or function in the course of an Autopilot flow.
-* You want to receive data from the Autopilot system.
-* You want to perform an action and take different paths based on the outcome.
-
-**Example:** sending an email.
-
-You should use a `condition` when:
-
-* You want to give the user the option to take different actions based on pre-existing data
-* You want the user to be able to take different actions based on events *which have previously occurred*.
-
-**Example:** checking whether a user is currently up to date with payments
-
-#### Step 4 - Configure your Ingredient
-
-No matter what type of ingredient you are creating, you need to nominate some basic details:
-
-`name` - The name of the ingredient, as it will appear to users, e.g. "Send SMS".
-
-`identifier` - A short string uniquely identifying this ingredient. This is most significant for triggers for which it is used to identify which trigger to activate when calling it using the API.
-
-`shortDescription` - A brief description of what this ingredient does, e.g. "Sends an SMS".
-
-`longDescription` - An optional longer description for mouseovers and detail in the store, e.g. "This ingredient allows you to send SMS messages to contacts in the current flow using the Twilio API".
-
-`endpoint` - Relevant only to actions and conditions, this should be the full URL to your REST API which implements an action or condition as described in this document. If you haven't made it yet, or someone else will be making it for you, leave this blank for now, you can enter it later and the system will remind you to do so.
-
-### Ingredient designer
-
-Our visual ingredient designer allows you to select the colors and icon for your ingredient.
-This gives you the opportunity to brand your ingredient so that it will be easily identifiable
-to potential customers if you include it in the store.
-
-In any case, make sure that your icon does the best to convey what the ingredient does. When
-an ingredient is on the canvas, not much text will be able to be displayed, so having an icon
-which reminds the user what the ingredient does will help.
-
-### Outcome wheel
-
-The outcome wheel is available for actions and conditions only. Triggers strictly initiate a
-flow and cannot have multiple outcomes. 
-
-For an `action`, the outcome wheel contains the different outcomes which can come from the 
-action which your system is performing. For example, this might be a "success" or "failed"
-outcome.
-
-For a `condition`, the outcome wheel contains the available alternatives for the status which
-the object is checking. For example, "currentCustomer", "overdueCustomer", "previousCustomer".
-
-Your outcome wheels can have up to 6 outcomes.
-
-The name of each outcome must be an alphanumeric string. This is what you will use in the 
-response to the API call which will be made to your backend. You will return a javascript
-object containing keys representing each of the outcomes and including arrays of the list
-of member ids which meet each criteria.
-
-Before your ingredient will go live, our system will need to test your backend code to make
-sure it provides results for each of the outcomes (even if they are empty arrays).
-
-**Note**: *For all actions and conditions, a default `onContinue` outcome is always included. All
-contacts will pass through the `onContinue` if it is used by the user by default, your app
-will not be responsible for, or able to change this.*
-
-### Settings panel creation
-
-There are potentially several details that your ingredients are going to need in order to 
-perform their function for the client. For example, you might require an API key for your 
-app to identify the customer, some settings which configure the app to suit them, or identifying
-a specific piece of data to act on in your back end.
-
-For that reason, each ingregient contains a settings panel which can ask for a series of input from
-the user before the ingredient is considered *configured*. If an ingredient in an Autopilot
-flow is not configured, the user will not be able to publish the flow. So you can be sure
-that if your ingredient has compulsory data, that it will be provided before your backend
-is hit.
-
-# Group Testing your ingredients in flows
-
-### Testing an ingredient
-
-The easiest way to test ingredients for your apps is by simply using them on an Automation flow on
-the instance on which you created them. This involves:
-
-1) Create a new Automation flow
-
-
-2) Find the ingredient which you want to test in the right hand panel
-
-
-3) Create a basic flow using a test list of contacts
-
-A good idea is to maintain a list of "test" contacts in your Autopilot instance. This might include
-you and various incarnations of your email address. If you use Google app you can do things like
-chris+test1@autopilothq.com, chris+test2@autopilothq.com, etc.
-
-You can then set up a flow like the following to test your ingredient:
-
-Trigger Timer -> Select list of contacts "Test" -> Your ingredient -> Add to list "Test Complete"
-
-### Test instance
-
-If you are making your app on your company's Autopilot instance and don't feel comfortable testing on there,
-you may request a test instance from us which we can set up for the purpose of app creation. Just send
-us an email at support@autopilothq.com with the subject "Test instance" and we will get one going for you.
-
-In this case, once you have finished testing your app, you can licence it to your main Autopilot instance, 
-which will then be able to install the app from the store.
-
-# Group Sharing your app with other instances
-
-Any apps you create in your Autopilot instance are by default only available to that instance.
-If you have other Autopilot instances that you would like to share the app with, you can do
-so by adding them in the *permissions* section of the app settings.
-
-**settings screenshot**
-
-You may enter any other instance id to share the app with that instance. Users of that instance
-will then have the opportunity to install your app.
-
-**Note:** *Once you share the app with another instance and they install the app, you will
-not be able to revoke access to the app. The reason for this is that it may break flows
-that the other instance that contains ingredients from your app.*
-
-
-# Group Making your app public
-
-If you would like to share or sell your app, the first step is to apply to make the app
-public. To do this select the *Make My App Public* option in the app settings screen.
-
-
-# Group API: Authentication
-
-### Note on Apiary mocking server
-
-Please feel free to take advantage of Apiary's built-in examples and mocking server. Please note though that when 
-using the live API, that you will need to provide the `Authorization` header as described below.
-
-### Note on Client Libraries
-
-If you choose to use one of the available client libraries, then authentication is handled for you. The
-client libraries also provide good examples of how to implement this scheme.
-
-### Authentication Method
-
-The Autopilot signing and authentication of REST API requests is based heavily on the AWS Signature Version 2 
-<http://docs.aws.amazon.com/AmazonS3/latest/dev/RESTAuthentication.html>.
-
-Authentication is the process of proving who you are to the system. The Autopilot API uses a custom HTTP 
-scheme based on a keyed-HMAC (Hash Message Authentication Code) from authentication. To authenticate a request, 
-you concatenate select elements of the request for form a string. You then use your Autopilot secret key to 
-calculate the HMAC of that string. You then add this signature as a parameter of the request as a HTTP header.
-
-When Autopilot receives your request, it checks the secret key and runs the same calculation on your request 
-to see if the signatures match. If it does, your request it fulfilled. 
-
-### The Authentication Header
-
-The Autopilot API uses the standard HTTP `Authorization` header to pass authentication information.
-
-```
-Authorization: Basic AutopilotKey:Signature
-```
-
-Your Autopilot API key and secret are available in your Autopilot Admin. You can regenerate these at any time, 
-and there is only one key and secret per Autopilot instance.
-
-The `AutopilotKey` will be the same in every request, wheras the `Signature` should be different per request.
-
-The following is an example of how to calculate the HMAC `Signature` to sign your requests:
-
-```
-StringToSign = HTTPVerb + "\n" +
-               Content-Type + "\n" +
-               Date + "\n" +
-               Resource
-
-Signature = crypto.createHmac('sha256', AutopilotSecret).update(data).digest('base64')
-
-Authorization = "Basic:" + " " + AutopilotKey + ":" + Signature;
-```
-
-### Explanations of the above variables
-
-| Field             | Description   | Example  
-| :-------------    |:------------- | :-----
-| `HTTPVerb`        | The type of HTTP request being made | POST
-| `Content-MD5`     | An MD5 hash calculation of the body of your request | 9e107d9d372bb6826bd81d3542a419d6 
-| `Content-Type`    | The content type being requested in the headers | application/json 
-| `Date`            | Date in RFC 822 format | Sun, 06 Nov 2014 08:49:37 GMT
-| `Resource`        | The path part of the URL without domain or query string | /automation/trigger
-| `AutopilotSecret` | The Autopilot Secret as provided to you in your Autopilot Admin | 13098c67fe342dd9d92bbc201c3c7484
-| `AutopilotKey`    | The Autopilot Key as provided to you in your Autopilot Admin | 2c55ff5479cdc15853883a488d6ea712
-
-Using the above example, we get the following
-
-### Full example using example values
-
-```
-StringToSign = "GET" + "\n" +
-               "application/json" + "\n" +
-               "Sun, 06 Nov 2014 08:49:37 GMT" + "\n" +
-               "/automation/trigger"
-
-Signature = crypto.createHmac('sha256', "13098c67fe342dd9d92bbc201c3c7484").update(data).digest('base64')
-
-Authorization = "Basic:" + " " + "2c55ff5479cdc15853883a488d6ea712" + ":" + Signature;
-```
-
-Select the following link for examples in various languages:
-
-<http://api.autopilothq.com/docs/auth-examples>
-
-### Available libraries
-
-We also offer a standard Node.JS NPM module which fully implements this API. There are more examples in 
-this document on how to use the library, but regarding authentication, this is how you do it:
-
-```javascript
-var Autopilot = require('autopilot');
-autopilot.setAutopilotKey('2c55ff5479cdc15853883a488d6ea712');
-autopilot.setAutopilotSecret('13098c67fe342dd9d92bbc201c3c7484');
-autopilot.getAutomationFlows(function(err, autopilotFlows) {
-  if (err) {
-    console.log("Could not get Autopilot flows", err);
-  }
-  else {
-    console.log("Found these Autopilot flows", JSON.stringify(autopilotFlows));
-  }
-});
-```
-
-Find out more about our various pre-build libraries here:
-
-<http://api.autopilothq.com/docs/libraries>
-
-# Group API: Command Stream
-
-
-# Command Stream [/v1/commandStream]
-
-## Subscribe to command stream [GET]
-The command is a one-way stream which you connect to, so that you app can receive all commands from
-the Autopilot system.
-
-The command stream is used for the following things:
-
-* Receiving heartbeats to confirm that your app is online and responding correctly.
-* Receiving commands to run actions and check conditions which you must respond to using [finishTask](http://docs.autopilot.apiary.io/#apiactionandconditions).
-* Receiving logs
-
-For your app to work with Autopilot, it must be connected to the Autopilot stream at all times. If 
-you use a client library (outlined later in this document), maintaining a connection to the stream
-will be handled for you. If you are implementing your app with the REST API as described here, it is
-your responsibility to keep the stream connected.
-
-You only connect one command stream for your entire app which covers all ingredients and all autopilot
-instances. Where relevant, the data will be provided to tell you which autopilot instance to act on.
-In general terms you will only be provided with autopilot instances to work with which have both
-permission to use your app (i.e. you gave them a licence or your app is public) and have also installed
-your app. The Autopilot system takes care of this for you so you don't have to worry about it.
-
-To connect to the command stream, you simply send a GET request to **/v1/commandStream**. Essentially,
-this connection will then never be terminated, the response will be streamed to you as commands come
-in. A regular HEARTBEAT will also be sent through the stream to both make sure the connection stays
-alive and also to check that your app is responding correctly. There is a section below on how to
-handle heartbeats.
-
-Note that although there is no payload to this request, you do require the Authorization header as
-described above, which will contain your AutopilotKey, thus identifying the app stream which you
-are connecting to.
-
-### Parsing the command stream
-
-The command stream is the response to your GET request and the system will keep writing to this stream
-until it is closed. If you restart your app and the stream is lost, the Autopilot system will buffer
-any commands that it was going to send to your app until it is back online and then start sending them
-when the connection is re-established.
-
-Individual commands will be separated by a newline character. Although commands will tend to be written
-all at once, it is not sufficient to consider each chunk of data recieved to be a single line, instead
-a better way of handling this is to buffer the data you are receiving until you detect a newline character
-and then parse the command prior to that.
-
-A Javascript example:
-
-```
-var buffer = "";
-
-function processCommand (command) {
-}
-
-function dataReceivedFunction (data) {
-  buffer += data.toString();
-  while (buffer.split("\n").length > 1) {
-    var parts = buffer.split("\n")
-    processCommand(parts[0]);
-    buffer = parts[1];
-  }
-}
-```
-
-### Heartbeats
-
-Heartbeats are sent on a regular basis by Autopilot to both keep the connection alive, and to check that
-the connection is still able to receive data. Heartbeat commands consist of the capitalized word
-HEARTBEAT, followed by a colon and then the current Unix timestamp.
-
-For example:
-
-```
-{"cmd": "HEARTBEAT", "at": "1407804024"}
-```
-
-It is safe to ignore heartbeat messages.
-
-
-### Log lines
-
-Log lines are also sent through the command stream so that you can see any errors that your app is having, 
-or get other general information about the system. Log lines will be in the format `LOG:TYPE:Log message`
-
-So some examples of log lines might be the following:
-
-```
-{"cmd": "LOG", "at": "1407804025", "type": "ERROR", "content": "You do not have permission to write to the 'demo' instance."}
-{"cmd": "LOG", "at": "1407804025", "type": "INFO", "content": "Contact member_123948723497 added successfully."}
-{"cmd": "LOG", "at": "1407804025", "type": "WARN", "content": "Two out of maximum of 3 command streams connected."}
-```
-
-### Actions and conditions
-
-The stuff we are really interested in as an Autopilot app developer are the `action` and `condition` commands
-which tell our app what to do and provide the details of the contacts who we need to do it for. `Triggers`
-are different because it is our app which initiates the action, so these are discussed in the "API: Triggers"
-section of this document.
-
-Here is an example action:
+One crucial thing about the contact_added event is that it happens **when contacts change too**. Autopilot contacts are
+uniquely keyed off email address such that no two contacts can have the same email address. For this reason, you need to
+check to see if you have a contact with a given email address 
 
 ```
 {
-   "cmd": "ACTION", 
-   "at": "1407804025",
-   "taskId": "text_wfwiruh239r82u3r",
-   "identifier": "sendSMS"
-   "autopilotId": "demo",
-   "settings": {
-        "smsText": "Hi --first_name--, I'm sending you an SMS"
-   },
-   "contacts": [
-        {
-          "_id": "contacts_person_76BA0335-6BE2-4ECE-835E-4556FA5B5F6F",
-          "_rev": "3-d6cc9c1b7cd338bd288fc61086a0fb48",
-          "FirstName": "oiooio",
-          "LastName": "ioioio",
-          "Company": "bislr",
-          "twitter": "",
-          "created_at": "Mon, 11 Aug 2014 23:06:47 GMT",
-          "Phone": "555-555-555",
-          "MobilePhone": "555-555-555",
-          "Title": "io",
-          "Fax": "555-555-555",
-          "MailingStreet": "califronia",
-          "MailingCity": "san francisco",
-          "MailingState": "ca",
-          "MailingPostalCode": "93020",
-          "MailingCountry": "USA",
-          "Birthdate": "01//01/01",
-          "Industry": "comps",
-          "NumberOfEmployees": "100",
-          "company_priority": false,
-          "Name": "oiooio ioioio",
-          "app": "contacts",
-          "instance_id": "person_76BA0335-6BE2-4ECE-835E-4556FA5B5F6F",
-          "Website": ""
-        }
-   ]
- }
+  "event": "contact_added",
+  "contact": {
+  }
+}
 ```
 
-*Note: I have added the newlines for convenience of viewing, the only new lines in the real command steam
-are to deliniate commands.*
 
-Whenever your app receives an ACTION or CONDITION command, it is the apps' responsibility to execute the
-requested action and then respond with a [finishTask](http://docs.autopilot.apiary.io/#apiactionandconditions) 
-call, which is described in the next section.
+### Contact unsubscribes (Event key: contact_unsubscribes)
 
-There are several, important values which will always be present in an ACTION or CONDITION command:
+This event is triggered when a contact is added to a list.
 
+The main ways this event could be triggered are: 
 
-`cmd` - In this case we are looking for commands which have the literal value "ACTION" or "CONDITION".
+* The contact is manually added to the list using the contacts section of the Autopilot UI
+* A journey has a step which adds contacts to a list and the contact reaches it
+* An API call adds the contact to a list
+* Contacts are imported to the list
 
-`at` - This is a UNIX timestamp of the time at which the command was sent.
+Note that both the `contact_id` and `email` are included for the contact in case you prefer
+to key off email address instead of our internal id. This prevents forcing you to make an 
+additional API call to GET the contact just to find out the email address from the `contact_id`
 
-`taskId` - This is a unique identifier for the task we are currently executing, we will need to it identify the task we are responding to when calling [finishTask](http://docs.autopilot.apiary.io/#apiactionandconditions).
+```
+{
+  "event": "contact_added_to_list",
+  "contact_id": "person_ED75BA78-2405-4564-B24C-F2B8F936C7C6",
+  "email": "chris@autopilothq.com",
+  "list_id": "contactlist_ED75BA78-2405-4564-B24C-F2B8F936C7C6"
+}
+```
 
-`ingredientIdentifier` - This is the identifier that you set when creating your ingredient in the Autopilot admin, it might be something like `sendSMS`
+### Contact Added To List (Event key: contact_added_to_list)
 
-`autopilotId` - This is the current Autopilot instance that we are acting on behalf of for this call. Autopilot will enforce permissions in terms of licenced/installed apps, so if you get a request for a given identifier, you can be fairly sure you have permission to act on it.
+This event is triggered when a contact is added to a list.
 
-`settings` - This will be a hash containing the settings as configured by the person using your ingredients in their automation flow.
+The main ways this event could be triggered are: 
 
-`contacts` - This will be an array containing the full contact record for each of the contacts which your action or condition should act on for this request. The reason the full contact details are provided is to avoid forcing you to do make additional requests just to look up the contact details for the contacts which you definitely have to act on anyway.
+* The contact is manually added to the list using the contacts section of the Autopilot UI
+* A journey has a step which adds contacts to a list and the contact reaches it
+* An API call adds the contact to a list
+* Contacts are imported to the list
 
+```
+{
+  "event": "contact_added_to_list",
+  "contact_id": "person_ED75BA78-2405-4564-B24C-F2B8F936C7C6",
+  "email": "chris@autopilothq.com",
+  "list_id": "contactlist_ED75BA78-2405-4564-B24C-F2B8F936C7C6"
+}
+```
+
+### Contact Removed From list (Event key: contact_removed_from_list)
+
+This event is triggered when a contact is removed from a list.
+
+Note that the `contact_removed_from_list` event will not be triggered if the list itself is deleted. Likewise, if
+the contact is deleted this event will not be triggered.
+
+The main ways this event could be triggered are: 
+
+* The contact is manually removed from the list using the contacts section of the Autopilot UI
+* A journey has a step which removes contacts from a list and the contact reaches it
+* An API call removes the contact from a list
+
+```
+{
+  "event": "contact_removed_from_list",
+  "contact_id": "person_ED75BA78-2405-4564-B24C-F2B8F936C7C6",
+  "list_id": "contactlist_ED75BA78-2405-4564-B24C-F2B8F936C7C6"
+}
+```
+
+### Contact Entered Segment (Event key: contact_entered_segment)
+
+This event will be triggered when a contact "enters" a segment, that is, a change is made to a contact
+that means it meets the segment criteria.
+
+```
+{
+  "event": "contact_entered_segment",
+  "contact_id": "person_ED75BA78-2405-4564-B24C-F2B8F936C7C6",
+  "email": "chris@autopilothq.com",
+  "segment_id": "contactlist_ssegED75BA78-2405-4564-B24C-F2B8F936C7C6"
+}
+```
+
+### Contact Left Segment (Event key: contact_left_segment)
+
+This event will be triggered when a contact "leaves" a segment, that is, a change is made to a contact
+that means it no longer meets the segment criteria.
+
+{
+  "event": "contact_left_segment",
+  "contact_id": "person_ED75BA78-2405-4564-B24C-F2B8F936C7C6",
+  "email": "chris@autopilothq.com",
+  "segment_id": "contactlist_ssegED75BA78-2405-4564-B24C-F2B8F936C7C6"
+}
+
+# Group Actions
+
+Actions are API methods which allow you to actions in your Autopilot instance. Actions answer the question
+*"How do I get data into Autopilot and trigger journeys"*.
+
+**Action Rate Limits**
+
+We have put some basic throttling in place for version 1 of the Autopilot API. Currently, we limit you to 5 API
+calls per second. This limit was set more as a sanity limit than as a way to actually stop you from interacting
+with our system at the rate you desire.
+
+The Autopilot API, as with the rest of Autopilot is *horizontally scalable*. This means that as we start to hit
+performance capacity, we can simply add new nodes to the relevant service to be able to handle higher rates of
+requests. Over time, we will expand the nodes dedicated to the API and increase our API limits if we need to.
+Please *contact us* if you think the rates are too low for you, we will work with you to selectively increase them
+to get the right balance for us both.
+
+One thing to note is that we currently do not have any Bulk API operations such as adding, deleting or retrieving
+contacts in bulk. This was done deliberately so that we could have the API out sooner. We will be adding bulk
+operations in the future.
+
+**Apiary Mock Server**
+
+Please feel free to use the Apiary mocking server which is provided as part of this documentation. While it will
+help you to make sure that you are calling the correct URLs, it doesn't handle Authentication and won't give the
+correct response codes to you based on the system actually doing work.
+
+A better method for testing with our system while you integrate is to simply *sign up for a trial account*, generate
+an API key, run all your tests using that instance and key, and then switch over to your company's account when
+you are ready to go live. If you let us know when you are done with your test instance we can delete it.
+
+# REST Hook [/v1/hook]
+
+## Register a REST Hook [POST]
+
+Rather than having your system continuously poll to find out when there is new information to trigger from, we allow you
+to register a URL which we will call when these events occur, called a "REST Hook". Whenever an event you have registered
+for occurs, for example a new contact being added to Autopilot, we will send a HTTP POST to your URL with information about
+that event for your system to act upon. 
+
+The **triggers** section of this document describes the available events and the data which they will send through, the currently
+supported triggers are:
+
+- `contact_added`
+- `contact_unsubscribes`
+- `contact_added_to_list`
+- `contact_removed_from_list`
+- `contact_entered_segment`
+- `contact_left_segment`
+
+To register a new REST Hook, you need to sent a post request to `/v1/hook`, with the following parameters:
+
+- `event` - This is the trigger event name that you wish to be told about.
+- `target_url` - This is the URL in your API which you want our API to POST to when this event occurs.
+
+When you request is valid, you will receive a *201 Created* status. From this point on, when the event you register for happens, your
+URL will be POSTed to with the event data. Please read the relevant **trigger** section to see the data which you will receive.
+
+You may register more than one `target_url` for a given event, when the event occurs *each* of the registered target URLs will be
+called with the event data. You may not, however, register the same `target_url` more than once, if you try you will receive a *409 Conflict*.
+
+When your `target_url` is POSTed to, our system will react in different ways depending on how your system responds:
+
+1. If we gets a `410 Gone`, we will delete your REST Hook from our system and not call it again.
+2. If we get a timeout, we will try again up to 3 times, in reasonably quick succession, eventually giving up.
+3. If we get a status which **is not** between `200-204`, we will try again up to 3 times, in reasonably quick succession, eventually giving up.
+4. If we get a status which **is** between `200-204`, then we have a successful call.
+
+In cases **2.** and **3.**, once the request has failed 3 retries, then the trigger event is lost and will not be replayed. If is
+your responsibility to make sure that once registered, your target URL is successfully responding. If your system has trouble staying 
+online, or keeping up with the pace of requests, then a good design pattern is to have a dedicated service to receive and buffer the 
+requests to a volatile (Redis) or non-volatile (Postgresql, MongoDB) database, and then have a second service which picks up those
+requests and processes them at a pace which your system can handle.
 
 + Request (application/json)
 
         {
+            "event": "contact_added",
+            "target_url": "https://myapi.mycompany.com/ap14112546"
         }
+            
++ Response 201 (application/json)
+
+        {"id": "hook_ED75BA78-2405-4564-B24C-F2B8F936C7C6"}
+
++ Response 400 (application/json)
+
+        {"error": "Bad Request", "message": "No autopilotapikey header provided."}
+
++ Response 401 (application/json)
+
+        {"error": "Unauthorized", "message": "Provided autopilotapikey not valid."}
+
++ Response 429 (application/json)
+
+        {"error": "Too Many Requests", "message": "You have exceeded your request rate of 5 r/s."}
 
 + Response 500 (application/json)
 
-        {"error": "error", "message": "(various)"}
+        {"error": "Internal Server Error", "message": "(various)"}
 
-+ Response 403 (application/json)
+# REST Hook [/v1/hook/{id}]
 
-        {"error": "unauthorized", "message": "You are not authorized to connect to the commandStream using this api key."}
+## Unregister a REST Hook [DELETE]
 
+When you no longer wish your `target_url` to be POSTed to when the registered Autopilot event happens, you may unsubscribe
+an endpoint URL by providing the `id` which was given to you when you registered.
 
+If you no longer have the `id` available, just send through the `target_url` in place of `id` and we will look it up and
+delete it based on URL for you.
 
-# Group API: Action and Conditions
+If you've REALLY forgotten everything and you just want to remove any `target_url`s which are listening to a particular event,
+pass through the event name, e.g. `contact_added` through as the `id`, and we will delete all associated URLs for this event.
 
-# Responding to actions and conditions [/v1/finishTask]
+A `204` response means that the deletion was successful as requested. All other response are described by the error message
+that you will receive, and are also detailed below.
 
-## Finish Task [POST]
++ Response 204
 
-When you have received a command from the command stream to execute an action or check a condition
-it is your responsiblity to reply to Autopilot within 5 minutes. Ideally you will reply much more
-quickly than this depending on what action you are performing.
++ Response 400 (application/json)
 
-To reply, you need to post to the command stream. At a minimum your POST request needs to contain
-the following data:
+        {"error": "Bad Request", "message": "No autopilotapikey header provided."}
 
-`taskId`: this should be the taskId which you received in the original command
++ Response 401 (application/json)
 
-`autopilotId`: this is the autopilotId which you were sent in the original command. This will be checked
-to see if it matches before the flow is continued, so it is important that it is correct.
+        {"error": "Unauthorized", "message": "Provided autopilotapikey not valid."}
 
-`results`: this is an optional hash which contains values for the different outcomes defined for this
-action or condition. If you do not provide it, all contacts will flow into the `onContinue` outcome
-only. In the case of a condition, this will result in all contacts getting "stuck" on your ingredient,
-so it is important that you provide the correct results object.
++ Response 429 (application/json)
 
-To do this you need to split contacts into different arrays which correspond with the names of
-each of the outcomes that you defined in the outcome builder. Below we see the example of `onSent`
-and `onNotSent`. While contacts can appear in multiple outcomes, it is not recommended.
+        {"error": "Too Many Requests", "message": "You have exceeded your request rate of 5 r/s."}
 
-+ Request (application/json)
++ Response 500 (application/json)
 
-        {
-            "taskId": "task_wiweufhwiefhwiefuhwf",
-            "autopilotId": "demo",
-            "results": {
-                "onSend": ["member_xxxxx", "member_yyyyy"],
-                "onNotSent": ["member_zzzzz"]
-            }
-        }
+        {"error": "Internal Server Error", "message": "(various)"}
+
+# Contact [/v1/contact]
+
+## Add or update contact [POST]
+
+Autopilot uses a document based database. This means that a contact document is simply one which conforms
+to a particular set of parameters. As such, it is possible to add and store any additional data in a 
+contact document that you like. 
+
+For custom fields to be used in Autopilot itself, however, you need to do the following:
+
+1. Add a custom field in Autopilot (*Help Guide*)
+2. Add the field to a `custom_fields` hash in the contact document
+
++ Response 400 (application/json)
+
+        {"error": "Bad Request", "message": "No autopilotapikey header provided."}
+
++ Response 401 (application/json)
+
+        {"error": "Unauthorized", "message": "Provided autopilotapikey not valid."}
+
++ Response 429 (application/json)
+
+        {"error": "Too Many Requests", "message": "You have exceeded your request rate of 5 r/s."}
+
++ Response 500 (application/json)
+
+        {"error": "Internal Server Error", "message": "(various)"}
+
+# Contact [/v1/contact/{contact_id_or_email}]
+
+## Get contact [GET]
+
+**Understanding the format of a contact document**
+
+If you need to get a group of contacts, the most efficient thing to do is use the **Bulk get contacts**
+method described below. This will use less API calls and be more efficient in terms of speed and HTTP
+overhead. 
+
++ Parameters
+    + contact_id_or_email (string) ... Either the Autopilot contact_id e.g. `person_xxxxxx`, or the contact's email address.
 
 + Response 200 (application/json)
 
-        {"credits": 438}
-
-+ Response 500 (application/json)
-
-        {"error": "error", "message": "(various)"}
+        {"message": "Could not find contact"}
 
 + Response 404 (application/json)
 
-        {"error": "error", "message": "Task not found for this autopilotId"}
+        {"error": "Not Found", "message": "Could not find contact."}
+
++ Response 400 (application/json)
+
+        {"error": "Bad Request", "message": "No autopilotapikey header provided."}
+
++ Response 401 (application/json)
+
+        {"error": "Unauthorized", "message": "Provided autopilotapikey not valid."}
+
++ Response 429 (application/json)
+
+        {"error": "Too Many Requests", "message": "You have exceeded your request rate of 5 r/s."}
+
++ Response 500 (application/json)
+
+        {"error": "Internal Server Error", "message": "(various)"}
+
+## Delete a contact [DELETE]
+
+This method will remove the contact from your database and stop them from continuing in any journeys, 
+being in any segments or lists, and receiving emails, SMS and other communications. If you simply 
+wish to **unsubscribe** a contact, or **eject a contact from a journey** then you should use the 
+***unsubscribe** and **eject** methods below for a more appropriate approach.
+
+Deleting a contact is permanent, and there is no way to undo it. At Autopilot we keep backups on an 
+hourly, daily, weekly and monthly basis. However, when we restore the data from the backup, you lose 
+everything which has transpired since the time the backup was created. 
+
+To delete a contact you need to provide the `:contact_id_or_email` parameter. This allows you to specify
+an Autopilot `contact_id` such as `person_9EAF39E4-9AEC-4134-964A-D9D8D54162E7` or an email address. If
+there is more than one contact with that email address in the database, they will all be deleted.
+
+On success you will receive a `204 No Content` response. If the contact you are trying to delete doesn't
+exist because they have already been deleted, or never existed, you will receive a `404 Not Found` response.
+
++ Response 204 (application/json)
+
++ Response 404 (application/json)
+
+        {"error": "Not Found", "message": "Could not delete contact as contact could not be found."}
+
++ Response 400 (application/json)
+
+        {"error": "Bad Request", "message": "No autopilotapikey header provided."}
+
++ Response 401 (application/json)
+
+        {"error": "Unauthorized", "message": "Provided autopilotapikey not valid."}
+
++ Response 429 (application/json)
+
+        {"error": "Too Many Requests", "message": "You have exceeded your request rate of 5 r/s."}
+
++ Response 500 (application/json)
+
+        {"error": "Internal Server Error", "message": "(various)"}
+
+# List [/v1/list]
+
+## Add list [POST]
+
+Lists are used in Autopilot to group contacts together. A contact can belong to as many lists as you
+like. This method allows you to add a new list. It will appear in the tree in the Contacts section
+of Autopilot, and you can use the returned `list_id` to add any contacts you like to it by `contact_id`
+or `email`.
+
++ Response 200 (application/json)
+
+        { "list_id": "contactlist_98a45928946bc74e8a5c8c2d7ba30fefe7fd7445" }
+
++ Response 409 (application/json)
+
+        {"error": "Conflict", "message": "A list with this name already exists."}
+
++ Response 400 (application/json)
+
+        {"error": "Bad Request", "message": "No autopilotapikey header provided."}
+
++ Response 401 (application/json)
+
+        {"error": "Unauthorized", "message": "Provided autopilotapikey not valid."}
+
++ Response 429 (application/json)
+
+        {"error": "Too Many Requests", "message": "You have exceeded your request rate of 5 r/s."}
+
++ Response 500 (application/json)
+
+        {"error": "Internal Server Error", "message": "(various)"}
+
+## Delete list [DELETE]
+
++ Response 204 (application/json)
 
 + Response 403 (application/json)
 
-        {"error": "unauthorized", "message": "Your request was not authorized."}
-        
-        
-# Group API: Triggers
-
-# Trigger [/v1/trigger]
-
-## Call Trigger [POST]
+        {"error": "Forbidden", "message": "Could not delete the list as it it is being used in a journey or segment."}
 
-+ Response 403 (application/json)
-
-        {"error": "unauthorized", "message": "Your request was not authorized."}
-
-# Group Node.js Client Library
-
-Here at Autopilot, we develop almost exclusively using Javascript and Node.js. For that reason we have
-created a full implementation of the Autopilot API as a Node.js NPM module for your convenience. All you
-need to do create a new app, or add Autopilot support to your existing app is to include our library,
-set up an app and optionally incredients in your Autopilot Admin, and get your API key and Secret.
-
-The library will take care of authentication and signing all of your requests, so you can completely
-disregard the sections in this document on auth, http, etc. and just focus on what makes your app
-unique.
-
-From there, you define your app's behaviour like a normal Node.js app, with a few special callbacks
-and helpers we provide. Below, I'll walk you through a sample app, which should be quick & easy to 
-understand.
-
-## Breakdown of an example Node.js Autopilot app
-
-[View the full example app on Github](https://github.com/autopilothq/autopilot-api)
-
-The initial setup requires you to include the npm module 'autopilot-api'
-
-To install this you'll need to run: `npm install autopilot-api --save`
-
-Following, we setup our initial file with API and Secret credentials:
-
-```
-var autopilot = require('autopilot-api');
-autopilot.setApiKey('3fzp8pvi');
-autopilot.setSecret('0h9i19k9');
-```
-
-Once this is setup we can start making direct calls to the Autopilot API for Autopilot instances 
-which have our app installed. You are automatically authorized to work on your own Autopilot instance,
-that is, the one which you set up the app on to get your API key and secret. In this example let's
-consider that to be called `demo`. Your app, of course, will be able to operate on other instances
-later for anyone who installs your app within your company if you share it, or anyone if you make 
-your app public and people install it.
-
-The idea is to make your app capable of working with any Autopilot instance, and let the Autopilot
-system and its app management tools which you control to decide which instances your code should
-operate on. For a more detailed understanding of app sharings and permissions, **select this link**.
-
-### Actions & Conditions
-
-The next step for our app is to write definitions for any `actions` or `conditions` which we created
-in the ingredient builder. Actions and conditions are triggered when a contact reaches them in a
-published Autopilot flow for a given instance.
-
-For example, a person might have a flow which looks like:
-
-```Trigger Timer -> Select Contacts from List -> Send SMS -> Add to List 'All Sent'```
-
-Where `Send SMS` is your ingredient. You have set up your `Send SMS` ingredient in the ingredient
-builder like so:
-
-If you haven't done this and need help, please see the **App Builder** section of this document.
-
-To define the behaviour for `actions` and `conditions` we need to do similar to the following.
-The difference with a condition is that we would normally be checking something in our database
-and definitely having multiple outcomes. Below represents an action in the sense that it does work
-(i.e. sends the SMS) and both an action and condition in the sense that it has multiple outcomes
-which split the contacts coming into it:
-
-```
-var async = require('async');
-var autopilotTwilio = require('autopilot-twilio');
-var autopilot = require('autopilot-api');
-autopilot.setApiKey('3fzp8pvi');
-autopilot.setSecret('0h9i19k9');
-
-autopilot.action('sendSMS', function (contacts, settings, callback) {
-  var results = {onSent: [], onNotSent: []};
- 
-  async.forEach(contacts, function(contact, cb) {
-    autopilotTwilio.sendSMS(contact.cell, settings.smsTxt, function(err, status) {
-      if (err) return cb(err);
-      if (status === 0) {
-        results.onSent.push(contact.id);
-      }
-      else {
-        results.onNotSent.push(contact.id);
-      }
-    );
-  }, function(err){
-    if (err) {
-      callback("An error has occurred: possibly out of credits");
-    }
-    else {
-      callback(null, results);
-    }
-  });
-});
-
-```
-
-As seen above, we define our behaviour by calling the `action` or `condition`  methods, passing in
-the name of the action or condition as we set it up in the ingredient builder (don't worry you'll 
-see an error printed out when you run your program if you get it wrong) along with a function which
-takes three parameters.
-
-`contacts` - This parameter is an array of the contacts which have reached this action or condition.
-You can count on this variable *always* being a Javascript array, so there is no need to do any 
-type checking. If the step is invoked but there is no contacts, the array will simply be empty. The
-contacts will contain the full basic information for the contact including custom fields. We do this
-because usually ingredients will need to act on or use a certain portion of this contact's data, so
-to save additional calls and overhead (and to save you work!) we just send you through the latest
-info right along with the request.
-
-`settings` - These are the settings that the Autopilot user has inputted into your settings panel(s)
-for your app, as you defined them. So if your panel looked like this:
-
-**screenshot**
-
-Your settings object would look like the following:
-
-```
-{
-  smsText: "Hi --first_name--, thought I'd send you a delightful SMS",
-}
-```
-
-`callback` - This callback method is designed to allow the Autopilot flow to continue for the current
-batch of contacts after your object is finished doing its work. The system is very patient and will
-give you sufficient time to complete your task, but you should make sure your task finishes within
-*5 minutes*. If it doesn't, the task will be considered a failure an contacts will get 'stuck' on your
-step.
-
-Callback expects very specific data to be given to it. In the case where there was an error executing your task for ALL CONTACTS, you can callback with a generl
-     error to say that the task has failed:
-
-```
-callback("An error has occurred: possibly out of credits");
-```
-
-If your ingredient is an ACTION and does not have any specific outcomes on the outcome wheel
-then all contacts will simply travel down the "onContinue" path and you don't have to do anything
-except for the following. This is not allowed for conditions which must have different outcomes.
-
-```
-callback(null);
-```
-
-For actions with multiple outcomes, and all CONDITIONS, you must provide a Javascript object
-as the second parameter to callback which contains arrays of member ids which need to travel
-down that outcome path. No matter what you do, they will all travel down the "onContinue" path
-too, but this allows you to split the flow of members into different outcomes.
-
-```
-callback(null, {"onSent": ["member_xxxx", "member_yyyy"], "onNotSent": ["member_zzzz"]});
-```
-
-### The general listener and program flow
-
-Once you have defined your action and condition handlers you need to ensure two things. Firstly,
-that your program continues running. If it isn't running then it won't be available to handle
-incoming action and condition requests from Autopilot. Secondly, it needs to be listening to 
-the Autopilot command stream to get the incoming commands and data which are instructing it what
-to do.
-
-Fortunately we have made this especially simple for Node.js developers and all you need to do 
-is include the following, preferably at the end of your action and condition definitions:
-
-```
-autopilot.listen()
-```
-
-This one little command will take care of a lot for you:
-
-* Subscribing to the Autopilot command stream for your app
-* Re-connecting the stream if it gets disconnected
-* Killing off other connections for your API key if they exist
-* Making sure your program keeps running
-* Answering HEARTBEATs received from the Autopilot command stream so your program continues to register as being online.
-
-Without this line being included in your program, nothing will happen.
-
-### Triggers
-
-The next type of ingredients you will need to handle in your app are triggers. Triggers are events
-which happen in your system which the Autopilot user wants to use to trigger their Autopilot flows.
-
-You can define triggers for absolutely anything, but triggers have one major requirement: they must 
-act on an existing contact in the Autopilot instance. If a contact doesn't exist and you want to 
-trigger based on them, then you have to create the contact first. An example might be the easiest way
-to explain this.
-
-Let's say you were making a trigger ingredient which triggered a flow whenever someone submitted
-a survey on SurveyMonkey. Your code might look something like this:
-
-```
-var autopilotSurveyMonkey = require('autopilot-surveymonkey');
-var autopilot = require('autopilot-api');
-autopilot.setApiKey('3fzp8pvi');
-autopilot.setSecret('0h9i19k9');
++ Response 404 (application/json)
 
-/* This is just an example of an event coming from your own code or from
-   a library which you want to implement as an Autopilot app. If the app 
-   you are using isn't event driven, you can either poll for changes and 
-   then call the Autopilot trigger when you get new data, or implement
-   the Node.js EventEmitter yourself */
-autopilotSurveyMonkey.on('surveySubmitted', function(surveyDetails) {
+        {"error": "Not Found", "message": "Could not delete the list as it could not be found."}
 
-  autopilot.findOrCreateContact(
-    surveyDetails.email,
-    {
-       firstName: surveyDetails.firstName,
-       lastName: surveyDetails.lastName,
-       email: surveyDetails.email
-    },
-    function (member_id, member) {
-      autopilot.trigger('surveySubmitted', [member_id], function (settings, callback) {
-        
++ Response 400 (application/json)
 
-      });
-    }
-  );
-});
+        {"error": "Bad Request", "message": "No autopilotapikey header provided."}
 
-```
++ Response 401 (application/json)
 
-**NOTE TO SELF: HOW TO TRIGGER BASED ON SETTINGS**
+        {"error": "Unauthorized", "message": "Provided autopilotapikey not valid."}
 
-As you can see, the trigger is defined in a similar way to `actions` and `conditions`. You give
-two parameters to the trigger method: the name of the trigger as defined in the Autopilot app 
-builder, and a handler function. The main difference being that the handler function only has two 
-parameters: the settings that the user inputs based on the settings pangel you created in the Autopilot 
-App Builder, and a callback function.
++ Response 429 (application/json)
 
-`settings` - These are the settings that the Autopilot user has inputted into your settings panel(s)
-for your app, as you defined them. So if your panel looked like this:
+        {"error": "Too Many Requests", "message": "You have exceeded your request rate of 5 r/s."}
 
-**screenshot**
++ Response 500 (application/json)
 
-Your settings object would look like the following:
+        {"error": "Internal Server Error", "message": "(various)"}
 
-```
-{
-  smsText: "Hi --first_name--, thought I'd send you a delightful SMS",
-}
-```
+# Automation [/v1/journey/{journey_id}/contact/{contact_id_or_email}]
 
-`callback` - This callback method is designed to allow the Autopilot flow to start once your trigger
-has finished executing. Often triggers have very little work to do other than the act of triggering,
-but it is at this point you will need to identify the contact or contacts that we are triggering for.
-See below for how to accomplish this.
+## Eject contact from Journey [DELETE]
 
-Since triggering is a deliberate action, it never expects you to send through an error. If there 
-is an error in preparing to trigger for something, this is the issue of your application and you
-should handle it yourself. If you do call the callback with an error, it will just be ignored:
+There are many situations in which you wish remove a contact from a journey before they pass through
+all of the steps. An example of this is when a customer buys your product, you would not want to 
+continue them in a lead nurturing program to turn them into a customer, so you eject them from
+the journey. You may also have reasons occuring in your own app which require you to eject someone
+from a journey.
 
-```
-callback("Don't send errors on triggers, they will just be ignored");
-```
+To do so, you need to know the `journey_id` of the journey in Autopilot. There is currently no way to get this
+programmatically. Please pester us at `support@autopilothq.com` if you need such functionality. However
+in the short term, here is how to obtain the `journey_id` for one of your journeys:
 
-It is also not acceptable for a trigger to callback with no contacts. If there are no contacts,
-then there is nothing to trigger, so why bother doing it? The following will also be ignored:
+1. Login to your Autopilot account
+2. Go the the journeys section
+3. Select the kourney that you wish to eject contacts from in your API call
+4. In the URL in the address bar, copy everything after the last slash, e.g. `campaign_7BF91FA3-459D-4712-B8E9-8A85161800B6`
 
-```
-callback(null);
-callback(null,[]);
-```
+The reason the identifier is prefixed with `campaign_` and not `journey_` is because we changed our naming.
+It has taken great mental fortitude on our behalf to switch to the new and exciting "journey" moniker
+when we speak about Autopilot internally. 
 
-The only acceptable callback format for a trigger is the following, calling back with null as
-the error and an array of member ids as the second parameter:
+As with other API calls, we provide you with the ability to provide either an Autopilot `contact_id` or an
+email address as the `:contact_id_or_email` parameter. If you provide an email address, any contact with 
+that email address will be ejected, however due to us merging/de-duping contacts based on email address, 
+it is unlikely that there will ever be more than one contact with a given email address.
 
-```
-callback(null, ["member_xxxx", "member_yyyy"]);
-```
+If the journey you supply does not exist, or the contact is not on that journey (or does not exist), you
+will receive a `404` status in the response. On success you will receive a `204` status code with no body 
+content. This is us being fancy with our knowledge of HTTP status codes, and I hope it impresses you.
 
-The reason we still accept the error parameter even though it is ignored, is because this is a 
-convention across the whole Autopilot Node.js library and it can lead to confusion if the function
-signatures change between different calls, a la PHP.
++ Response 204 (application/json)
 
-The two main issues in terms of triggers that need to be addressed are the following.
++ Response 404 (application/json)
 
-#### If I can only provide member_ids to the trigger, how do I get them?
+        {"error": "Not Found", "message": "Could not delete the contact from the journey as the journey could not be found."}
 
-Good question. The best way to do this is use the `addContact` method to find or create the contact(s)
-that you wish to work with. `addContact` uses `email` as the primary key, so if it finds an existing
-contact in the current Autopilot instance, it will return it for you, and if none exists then it 
-will create it for you. There are 3 merge strategy when it comes to updating existing contacts:
++ Response 404 (application/json)
 
-1) `merge` - This is the default, any new fields you provide that do not exist on the contact will be
-added, and the new contact data will be returned. Fields which the contact has already will be ignored.
+        {"error": "Not Found", "message": "Could not delete the contact from the journey as the contact was not on that journey."}
 
-2) `overwrite` - All fields you provide will be overwritten, fields you don't provide will be kept.
++ Response 400 (application/json)
 
-3) `skip` - If this contact already exists, don't do anything to its data, just return it.
+        {"error": "Bad Request", "message": "No autopilotapikey header provided."}
 
-Here is an example call to `
++ Response 401 (application/json)
 
+        {"error": "Unauthorized", "message": "Provided autopilotapikey not valid."}
 
-### Error logging and the universal log
++ Response 429 (application/json)
 
-One of the biggest frustrations of building any new app is not getting good feedback on where you 
-are going wrong if things aren't working. Or, if things are working, what is happening at any 
-given time. For this reason we provide two methods of feedback for you to track your app.
+        {"error": "Too Many Requests", "message": "You have exceeded your request rate of 5 r/s."}
 
-#### App Monitoring
++ Response 500 (application/json)
 
-Please see the section on **App monitoring**, essentially in the App Builder in Autopilot you can
-see the number of calls your app is making, uptime/downtime, errors and a general log.
-
-#### In-app logging
-
-**Watching the log**
-
-```
-autopilot.log.tail('all')
-autopilot.log.tail('all', {autopilotId: 'demo'});
-```
-
-This will use console.log to output log lines as they come in from the command stream. In the 
-second example we restrict it to log lines for the Autopilot instance called `demo`. You can
-also define you own custom handler for each line which comes through so you can divert the output
-elsewhere or otherwise parse it. In this example the options object is blank:
-
-```
-autopilot.log.tail('all', {}, function(line) { console.log(line); });
-```
-
-**Watching just the errors**
-
-```
-autopilot.log.tail('errors');
-```
-
-As above you can pass a handler function as a second parameter to handle the lines yourself.
-
-**Getting the whole log**
-
-```
-autopilot.log.cat('all', {autopilotId: 'demo'}, function(line) { console.log(line); };
-```
-
-Note be careful with this call as it is going to stream your entire historical log. You can either 
-specify 'all', 'error', or 'info' to filter the log. The `autopilotId` in the options object is
-optional.
-
-**Adding to the log**
-
-```
-autopilot.log.info('demo', 'Instance is out of credits');
-autopilot.log.warn('demo', 'Low on credits', {credits: 5});
-autopilot.log.error(null, 'System outage');
-```
-
-The Autopilot log methods accept an optional autopilotId as their first parameter and a log line
-as their second parameter and an optional javscript object as the third parameter which can store
-meta data along with the log.
-
-You should include an autopilotId wherever possible, that way it will be associated with that instance
-and the user will have the benefit of seeing any errors or meta data in their log. It will also
-make debugging your app easier both for you and the Autopilot team.
-
-# Group PHP Client Library
-
-PHP is one of the most commonly used and accessible web programming languages. For that reason we have
-created a full implementation of the Autopilot API as a PHP library for your convenience. All you
-need to do create a new app, or add Autopilot support to your existing app is to include our library,
-set up an app and optionally incredients in your Autopilot Admin, and get your API key and Secret.
-
-        
-
-
+        {"error": "Internal Server Error", "message": "(various)"}
