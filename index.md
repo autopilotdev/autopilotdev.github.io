@@ -25,6 +25,7 @@ make additions or changes to our API.
 
 * [Getting started guide](/getting-started)
 * [API Documentation](http://docs.autopilot.apiary.io/)
+* [Zapier integration](/zapier)
 
 
 ### Getting Help
