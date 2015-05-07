@@ -4,7 +4,7 @@ title:            Autopilot API
 locale:           en_US
 
 # @Note: this is silly and we will have to keep changing it for dev mode
-url:              http://localhost:4000 #http://developers.autopilothq.com
+url:              http://developers.autopilothq.com #http://localhost:4000 #
 
 # Jekyll configuration
 
