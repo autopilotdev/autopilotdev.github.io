@@ -44,5 +44,14 @@ Generate your API key using the "Generate" button and copy it.
 Visit [http://docs.autopilot.apiary.io/](http://docs.autopilot.apiary.io/) for full documentation.
 
 
+# Step 4: Ask any questions you have in the API Issues forum
+
+[API Issues Forum](https://github.com/autopilotdev/autopilotdev.github.io/issues) on Github.
+
+
+# Step 5: Register to get notified of API changes to find out about new features
+
+[API Changelog](http://www.apichangelog.com).
+
 
 

@@ -30,5 +30,5 @@ make additions or changes to our API.
 
 ### Getting Help
 
-* [Submit a Zendesk Ticket](https://autopilothq.zendesk.com/hc/en-us/requests/new)
+* [Use our Github Issues page](https://github.com/autopilotdev/autopilotdev.github.io/issues)
 
