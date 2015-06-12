@@ -2,11 +2,9 @@
 layout: page
 title: Autopilot Zapier Integration
 tags: [autopilot, zapier, integration, connection, api]
-modified: 2015-05-04T07:36:07.573882-04:00
+modified: 2015-06-12T11:37:07.573882-04:00
 comments: false
 ---
-
-*Coming soon:* Note that the Autopilot Zapier integration will be released to selected trial users soon.
 
 <br />
 Autopilot is all about allowing you to use best of breed tools and automation your marketing interactions. While we natively integrate with several best of breed tools, it is inevitable that you will have other systems that you want to automate through Autopilot.
@@ -24,23 +22,4 @@ Example uses for the Autopilot Zapier integration include:
 Of course, there are many, many other uses for the Zapier integration, that is the whole point! We will be discussing some of these on our [developer blog](/blog). 
 
 <br />
-To get started with Zapier, you need to do the following:
-
-# Step 1: Get an Autopilot trial account
-
-If you don't already have a trial Autopilot account, head to [https://autopilothq.com](https://autopilothq.com) to get one. The API will work with trial accounts.
-
-# Step 2: Get Zapier Key
-
-Login to your Autopilot account at [https://login.autopilothq.com](https://login.autopilothq.com).
-
-<br />
-Click on the settings icon on the left hand side, and then select the "Zapier" section on the left hand side under "App Connections".
-
-# Step 3: To be continued
-
-We are currently letting selected users in to trial Zapier and Autopilot together. If you would like to be included, please email developers@autopilothq.com
-
-
-
-
+To get started with Zapier, [visit our Zendesk page](https://autopilothq.zendesk.com/hc/en-us/articles/204963625-How-to-use-Zapier-with-Autopilot).
