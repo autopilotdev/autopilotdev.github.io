@@ -71,6 +71,7 @@ Here is our completed listing:
 <br />
 [Public APIs (Mashape)](https://www.publicapis.com/)
 
+<br />
 This attractive and simple API directory is written by Mashape, an API documentation tool. I tried using Mashape but found the interface very confusing and restrictive. Apiary is more simple but got the job done for me, even though I don’t like how hard it is to group related API calls together if they have different paths.
 
 <br />
