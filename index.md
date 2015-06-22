@@ -13,7 +13,7 @@ journeys. This includes getting data into and out of Autopilot, interacting with
 * [Getting started guide](/getting-started)
 * [API Documentation](http://docs.autopilot.apiary.io/)
 * [Zapier integration](/zapier)
-* [Track API changes on API Changelog](https://www.apichangelog.com/)
+* [Track API changes on API Changelog](https://www.apichangelog.com/api/autopilot)
 
 ### Getting Help
 
