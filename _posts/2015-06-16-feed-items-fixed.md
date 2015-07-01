@@ -7,7 +7,7 @@ author_url : /author/chris
 author_avatar: chrissharkey
 show_avatar : false
 read_time : 2
-show_related_posts: false
+show_related_posts: true
 ---
 
 You may have noticed that adding contacts via the Autopilot API was resulting in feed items showing "added or updated via Zapier". This was happening because our Zapier integration is built on top of our API and, until today, we weren't distinguishing between Zapier requests and regular API requests.

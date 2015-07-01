@@ -7,7 +7,7 @@ author_url : /author/chris
 author_avatar: chrissharkey
 show_avatar : false
 read_time : 5
-show_related_posts: false
+show_related_posts: true
 ---
 
 Unsuprisingly, many of our API users are using the API to load large amounts of contacts into Autopilot. In the interests of having our API available sooner we had left out bulk operations, but the downside of this is that our API consumers are having to send hundreds of thousands of API requests to add as many contacts.

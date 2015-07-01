@@ -7,7 +7,7 @@ author_url : /author/chris
 author_avatar: chrissharkey
 show_avatar : false
 read_time : 5
-show_related_posts: false
+show_related_posts: true
 ---
 
 After recently publishing the first version of the Autopilot API for marketing automation, I did some research into the best places to list your API to have it discovered by interested developers. Right now, our API is very utilitarian and focuses on the core features that clients need, but in the near future we will be adding features which appeal directly to programmers and I want to make sure that our API is seen by those people.

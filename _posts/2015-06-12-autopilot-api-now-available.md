@@ -7,7 +7,7 @@ author_url : /author/chris
 author_avatar: chrissharkey
 show_avatar : false
 read_time : 2
-show_related_posts: false
+show_related_posts: true
 ---
 
 Today we sent a newsletter to people who have expressed an interest in Autopilot's API. We have been using our API internally for some time now, and are now excited to open it up to those who wish to use it.

@@ -7,7 +7,7 @@ author_url : /author/chris
 author_avatar: chrissharkey
 show_avatar : false
 read_time : 5
-show_related_posts: false
+show_related_posts: true
 ---
 
 Most of the API calls in the Autopilot API are simple one-and-done propositions, but getting all of the contacts on a list can be a little trickier. 
